@@ -6,6 +6,10 @@ from scoreboard import Scoreboard
 
 # player
 player = Player()
+# car
+car_manager = CarManager()
+# scoreboard
+scoreboard = Scoreboard()
 
 screen = Screen()
 screen.setup(width=600, height=600)
@@ -19,7 +23,18 @@ while game_is_on:
     time.sleep(0.1)
     screen.update()
 
+    # cars
+    car_manager.create_car()
+    car_manager.move_cars()
+
     # detect if player reach the top
-    if player.ycor() == player.finish_line_y:
-        player.increase_level()
+    if player.is_at_finish_line():
+        scoreboard.increase_level()
         player.reset_player()
+        car_manager.increase_speed()
+
+    # detect collision with car
+    for car in car_manager.all_cars:
+        if car.distance(player) < 20:
+            game_is_on = False
+            scoreboard.game_over()
